@@ -1,6 +1,6 @@
 {
   "name": "My Movies",
   "tagline": "",
-  "body": "<img src=\"http://imgur.com/FxkEqJV\"/>",
+  "body": "<img src=http://imgur.com/FxkEqJV/>",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
