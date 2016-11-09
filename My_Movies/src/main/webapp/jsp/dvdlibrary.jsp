@@ -153,14 +153,17 @@
                 </div>
                 <div id="libraryTableDiv" class="top-buffer">
                     <table id="dvdListTable" class="table table-bordered table-striped">
-                        <tr>
-                            <th class="col-sm-1"><button style="visibility: hidden" class="btn btn-primary">Submit</button></th>
-                            <th class="col-sm-6"><a href="#" id="titleSortLink" class="sortLink">Title</a></th>
-                            <th class="col-sm-1"><a href="#" id="releaseDateSortLink" class="sortLink">Release Year</a></th>
-                            <th class="col-sm-1"><a href="#" id="mpaaRatingSortLink" class="sortLink">MPAA</a></th>
-                            <th class="col-sm-3"><a href="#" id="userRatingSortLink" class="sortLink">User Rating</a></th>
-                        </tr>
-                        <tbody id="dvdListContent"></tbody>
+                        <thead>
+                            <tr>
+                                <th class="col-sm-1"><button style="visibility: hidden" class="btn btn-primary">Submit</button></th>
+                                <th class="col-sm-6"><a href="#" id="titleSortLink" class="sortLink">Title</a></th>
+                                <th class="col-sm-1"><a href="#" id="releaseDateSortLink" class="sortLink">Release Year</a></th>
+                                <th class="col-sm-1"><a href="#" id="mpaaRatingSortLink" class="sortLink">MPAA</a></th>
+                                <th class="col-sm-3"><a href="#" id="userRatingSortLink" class="sortLink">User Rating</a></th>
+                            </tr>
+                        </thead>
+                        <tbody id="dvdListContent">
+                        </tbody>
                     </table>
                 </div>
             </div>
