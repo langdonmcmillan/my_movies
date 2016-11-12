@@ -27,7 +27,7 @@ public class DVD {
     @Size(max = 150, message = "The title may only be 150 characters long")
     private String title;
     private ArrayList<String> genreList;
-    @Min(value = 1850, message = "They didn't have movids back then, did they?")
+    @Min(value = 1850, message = "They didn't have movies back then, did they?")
     @Max(value = 2250, message = "What, are you from the future or something?")
     private Integer releaseDate;
     private String mpaaRating;
@@ -61,6 +61,8 @@ public class DVD {
         this.userRating = 0;
         this.id = 0;
         this.actorList = new ArrayList<>();
+        this.genreList = new ArrayList<>();
+        this.writerList = new ArrayList<>();
         this.notes = "";
         this.trailerURL = "";
         this.coverURL = "";

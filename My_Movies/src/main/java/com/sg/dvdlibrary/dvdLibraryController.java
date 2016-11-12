@@ -26,9 +26,9 @@ public class dvdLibraryController {
         this.dao = dao;
     }
 
-    @RequestMapping(value = {"/", "dvdlibrary", "home"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "mymovies", "home"}, method = RequestMethod.GET)
     public String displayHome(Map<String, Object> model) {
-        return "dvdlibrary";
+        return "mymovies";
     }
 
     @RequestMapping(value = "/getDVDs", method = RequestMethod.GET)
