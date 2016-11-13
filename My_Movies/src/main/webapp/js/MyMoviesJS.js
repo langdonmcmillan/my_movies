@@ -31,9 +31,6 @@ function loadDVDs() {
 }
 
 function fillDVDLibrary(dvdList, status) {
-    $(".sortLink").each(function () {
-        $(this).removeClass("defaultSort");
-    });
     clearDVDLibrary();
     var dvdLibrary = $('#dvdListContent');
     $.each(dvdList, function (index, dvd) {
@@ -71,19 +68,20 @@ $(document).on("click", "#listAllButton", function () {
 });
 
 $(".sortLink").on("click", function () {
-    var linkID = "#" + $(this).attr("id");
-    var defaultSort = $(this).hasClass("defaultSort");
+    var linkID = $(this).attr("id");
+    var alreadySorted = $(this).hasClass("alreadySorted");
     var sortType = $(this).attr("id").replace("SortLink", "");
     $.ajax({
-        url: "sort/" + sortType + "/" + defaultSort
+        url: "sort/" + sortType + "/" + alreadySorted
     }).success(function (data, status) {
         fillDVDLibrary(data, status);
-        $(linkID).toggleClass("defaultSort");
         $(".sortLink").each(function () {
-            if ($(this).attr("id") !== linkID.replace("#", "") && ($(this).hasClass("defaultSort"))) {
-                $(this).removeClass("defaultSort");
+            var currentID = $(this).attr("id");
+            if (currentID !== linkID) {
+                $("#" + currentID).removeClass("alreadySorted");
             }
         });
+        $("#" + linkID).toggleClass("alreadySorted");
     });
 });
 
