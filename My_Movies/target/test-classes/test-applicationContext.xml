@@ -15,7 +15,7 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd"> 
 
     <!-- Bean definitions go here -->
-    <!-- <bean id="dvdInMemImpl" class="com.sg.dvdlibrary.dao.DVDInMemImpl"></bean> -->
+    <!-- <bean id="movieInMemImpl" class="com.sg.mymovies.dao.MyMoviesInMemImpl"></bean> -->
     
     <bean id="dataSource"
           class="org.apache.commons.dbcp2.BasicDataSource">
@@ -44,7 +44,7 @@
         <constructor-arg ref="jdbcTemplate"/>
     </bean> 
         
-    <bean id="dvdMyMovieDb" class="com.sg.dvdlibrary.dao.DVDDbImpl">
+    <bean id="MyMovieDb" class="com.sg.mymovies.dao.MyMoviesDbImpl">
         <property name="jdbcTemplate" ref="jdbcTemplate"/>
     </bean>
 </beans>

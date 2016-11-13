@@ -10,7 +10,7 @@
                             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <!-- Uncomment this to move to annotation driven configuration -->
     <mvc:annotation-driven />
-    <context:component-scan base-package="com.sg.dvdlibrary" />        
+    <context:component-scan base-package="com.sg.mymovies" />        
     <bean
         class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix">

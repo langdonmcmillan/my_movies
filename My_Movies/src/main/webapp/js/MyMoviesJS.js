@@ -13,7 +13,7 @@ $(document).ready(function () {
     $(".edit").hide();
     emptyStar = $("#emptyStar").attr("src");
     fullStar = $("#fullStar").attr("src");
-    loadDVDs();
+    loadMovies();
     $("#trailerModal").on('hide.bs.modal', function () {
         $("#trailerVideo").empty();
     });
@@ -22,34 +22,34 @@ $(document).ready(function () {
     });
 });
 
-function loadDVDs() {
+function loadMovies() {
     $.ajax({
-        url: 'getDVDs'
+        url: 'getMovies'
     }).success(function (data, status) {
-        fillDVDLibrary(data, status);
+        fillMovieLibrary(data, status);
     });
 }
 
-function fillDVDLibrary(dvdList, status) {
-    clearDVDLibrary();
-    var dvdLibrary = $('#dvdListContent');
-    $.each(dvdList, function (index, dvd) {
-        dvdLibrary.append($('<tr>')
+function fillMovieLibrary(movieList, status) {
+    clearMovieLibrary();
+    var movieLibrary = $('#movieListContent');
+    $.each(movieList, function (index, movie) {
+        movieLibrary.append($('<tr>')
                 .append($('<td>')
                         .append($('<button>')
                                 .addClass("btn btn-primary")
                                 .on("click", function (event) {
-                                    id = dvd.id;
+                                    id = movie.id;
                                     showView();
                                 })
                                 .text("Select")
                                 ))
-                .append($('<td>').text(dvd.title))
-                .append($('<td>').text(dvd.releaseDate))
-                .append($('<td>').text(dvd.mpaaRating))
+                .append($('<td>').text(movie.title))
+                .append($('<td>').text(movie.releaseDate))
+                .append($('<td>').text(movie.mpaaRating))
                 .append($('<td>').append(function () {
                     for (i = 1; i <= 5; i++) {
-                        if (i <= dvd.userRating) {
+                        if (i <= movie.userRating) {
                             $(this).append("<img class='smallStar' src='" + fullStar + "'alt='Star'>");
                         } else {
                             $(this).append("<img class='smallStar' src='" + emptyStar + "'alt='Star'>");
@@ -59,12 +59,12 @@ function fillDVDLibrary(dvdList, status) {
     });
 }
 
-function clearDVDLibrary() {
-    $("#dvdListContent").empty();
+function clearMovieLibrary() {
+    $("#movieListContent").empty();
 }
 
 $(document).on("click", "#listAllButton", function () {
-    loadDVDs();
+    loadMovies();
 });
 
 $(".sortLink").on("click", function () {
@@ -74,7 +74,7 @@ $(".sortLink").on("click", function () {
     $.ajax({
         url: "sort/" + sortType + "/" + alreadySorted
     }).success(function (data, status) {
-        fillDVDLibrary(data, status);
+        fillMovieLibrary(data, status);
         $(".sortLink").each(function () {
             var currentID = $(this).attr("id");
             if (currentID !== linkID) {
@@ -87,11 +87,11 @@ $(".sortLink").on("click", function () {
 
 $(".searchButton").on("click", function () {
     var searchType = $("#searchType").val();
-    var searchTerm = ($("#searchTerm").val() === "") ? "xalldvdsx" : $("#searchTerm").val();
+    var searchTerm = ($("#searchTerm").val() === "") ? "xallmoviesx" : $("#searchTerm").val();
     $.ajax({
         url: "search/" + searchType + "/" + searchTerm
     }).success(function (data, status) {
-        fillDVDLibrary(data, status);
+        fillMovieLibrary(data, status);
         $("#searchTerm").val('');
         $("#searchType").val('Keyword');
     });
@@ -105,20 +105,20 @@ $('.searchTerm').keypress(function (e) {
 });
 
 $(document).on("click", ".searchLink", function () {
-    var searchType = $(this).parent().attr("id").replace("dvd", "");
+    var searchType = $(this).parent().attr("id").replace("movie", "");
     var searchTerm = $(this).text().replace(",", "");
     searchTerm = searchTerm.trim();
     $.ajax({
         url: "search/" + searchType + "/" + searchTerm
     }).success(function (data, status) {
-        fillDVDLibrary(data, status);
+        fillMovieLibrary(data, status);
         $("#searchTerm").val('');
         $("#searchType").val('Keyword');
     });
 });
 
 function showView() {
-    viewDVD();
+    viewMovie();
     $(".view").show();
     $(".edit").hide();
     displayEditDeleteButtons();
@@ -133,82 +133,82 @@ function showEdit() {
     displaySaveCancelButtons();
 }
 
-function viewDVD() {
+function viewMovie() {
     $.ajax({
         type: "GET",
-        url: "dvd/" + id
-    }).success(function (dvd) {
-        clearDVDInfo();
+        url: "movie/" + id
+    }).success(function (movie) {
+        clearMovieInfo();
         var genres = "";
         var writers = "";
         var actors = "";
-        var cover = dvd.coverURL;
-        trailerURL = dvd.trailerURL;
-        $("#dvdTitle").html(("<h3>" + dvd.title + "</h3>"));
-        $("#dvdCoverURL").prepend("<a href='#trailerModal' data-toggle='modal' data-target='#trailerModal'>\n\
-        <img id='dvdCover' src='" + cover + "'alt='Cover Art'></a>");
-        $("#dvdSynopsis").html((dvd.synopsis));
-        $("#dvdReleaseDate").append("<a href='#' class='searchLink'>" + dvd.releaseDate + "</a>");
-        $.each(dvd.genreList, function (index, genre) {
+        var cover = movie.coverURL;
+        trailerURL = movie.trailerURL;
+        $("#movieTitle").html(("<h3>" + movie.title + "</h3>"));
+        $("#movieCoverURL").prepend("<a href='#trailerModal' data-toggle='modal' data-target='#trailerModal'>\n\
+        <img id='movieCover' src='" + cover + "'alt='Cover Art'></a>");
+        $("#movieSynopsis").html((movie.synopsis));
+        $("#movieReleaseDate").append("<a href='#' class='searchLink'>" + movie.releaseDate + "</a>");
+        $.each(movie.genreList, function (index, genre) {
             genres = genres + "<a href='#' class='searchLink'> " + genre + "</a>, ";
         });
         genres = genres.replace(/,(\s+)?$/, '');
-        $('#dvdGenres').append(genres);
-        $("#dvdDirector").append("<a href='#' class='searchLink'>" + dvd.director + "  </a>");
-        $.each(dvd.writerList, function (index, writer) {
+        $('#movieGenres').append(genres);
+        $("#movieDirector").append("<a href='#' class='searchLink'>" + movie.director + "  </a>");
+        $.each(movie.writerList, function (index, writer) {
             writers = writers + "<a href='#' class='searchLink'> " + writer + "</a>, ";
         });
         writers = writers.replace(/,(\s+)?$/, '');
-        $('#dvdWriters').append(writers);
-        $.each(dvd.actorList, function (index, actor) {
+        $('#movieWriters').append(writers);
+        $.each(movie.actorList, function (index, actor) {
             actors = actors + "<a href='#' class='searchLink'> " + actor + "</a>, ";
         });
         actors = actors.replace(/,(\s+)?$/, '');
-        $('#dvdActors').append(actors);
-        $("#dvdStudio").append("<a href='#' class='searchLink'>" + dvd.studio + "  </a>");
-        $("#dvdMpaaRating").append("<a href='#' class='searchLink'>" + dvd.mpaaRating + "  </a>");
+        $('#movieActors').append(actors);
+        $("#movieStudio").append("<a href='#' class='searchLink'>" + movie.studio + "  </a>");
+        $("#movieMpaaRating").append("<a href='#' class='searchLink'>" + movie.mpaaRating + "  </a>");
         for (i = 1; i <= 5; i++) {
-            if (i <= dvd.userRating) {
-                $("#dvdUserRating").append("<img id='" + i + "' class='view star' src='" + fullStar + "'alt='Star'>");
+            if (i <= movie.userRating) {
+                $("#movieUserRating").append("<img id='" + i + "' class='view star' src='" + fullStar + "'alt='Star'>");
             } else {
-                $("#dvdUserRating").append("<img id='" + i + "' class='view star' src='" + emptyStar + "'alt='Star'>");
+                $("#movieUserRating").append("<img id='" + i + "' class='view star' src='" + emptyStar + "'alt='Star'>");
             }
         }
-        $("#dvdNotes").append(dvd.notes);
+        $("#movieNotes").append(movie.notes);
     });
 }
 
-function clearDVDInfo() {
-    $("#dvdTitle").empty();
-    $("#dvdTitle").html("<h3>Title</h3>");
-    $("#dvdCoverURL").empty();
-    $("#dvdSynopsis").empty();
-    $("#dvdReleaseDate").empty();
-    $("#dvdGenres").empty();
-    $("#dvdDirector").empty();
-    $("#dvdWriters").empty();
-    $("#dvdActors").empty();
-    $("#dvdStudio").empty();
-    $("#dvdMpaaRating").empty();
-    $("#dvdUserRating").empty();
-    $("#dvdNotes").empty();
+function clearMovieInfo() {
+    $("#movieTitle").empty();
+    $("#movieTitle").html("<h3>Title</h3>");
+    $("#movieCoverURL").empty();
+    $("#movieSynopsis").empty();
+    $("#movieReleaseDate").empty();
+    $("#movieGenres").empty();
+    $("#movieDirector").empty();
+    $("#movieWriters").empty();
+    $("#movieActors").empty();
+    $("#movieStudio").empty();
+    $("#movieMpaaRating").empty();
+    $("#movieUserRating").empty();
+    $("#movieNotes").empty();
 }
 
 function populateEditFields() {
-    clearDVDEdits();
+    clearMovieEdits();
     $.ajax({
         type: "GET",
-        url: "dvd/" + id
-    }).success(function (dvd) {
+        url: "movie/" + id
+    }).success(function (movie) {
         var genres = "";
         var actors = "";
         var writers = "";
-        $("#editDVDTitle").val((dvd.title));
-        $("#editDVDCoverURL").val(dvd.coverURL);
-        $("#editDVDTrailerURL").val(dvd.trailerURL);
-        $("#editDVDSynopsis").val((dvd.synopsis));
-        $("#editDVDReleaseDate").val(dvd.releaseDate);
-        $.each(dvd.genreList, function (index, genre) {
+        $("#editMovieTitle").val((movie.title));
+        $("#editMovieCoverURL").val(movie.coverURL);
+        $("#editMovieTrailerURL").val(movie.trailerURL);
+        $("#editMovieSynopsis").val((movie.synopsis));
+        $("#editMovieReleaseDate").val(movie.releaseDate);
+        $.each(movie.genreList, function (index, genre) {
             genres = genres + genre + ", ";
             $(".genreCheckbox").each(function () {
                 var checkBoxValue = $(this).prop("value");
@@ -218,50 +218,50 @@ function populateEditFields() {
             });
         });
         genres = genres.replace(/,\s*$/, '') + " ";
-        $("#editDVDGenres").append(genres + "<a href='#genresModal' data-toggle='modal' data-target='#editGenresModal'><strong>Edit</strong></a>");
-        $("#editDVDDirector").val(dvd.director);
-        $.each(dvd.writerList, function (index, writer) {
+        $("#editMovieGenres").append(genres + "<a href='#genresModal' data-toggle='modal' data-target='#editGenresModal'><strong>Edit</strong></a>");
+        $("#editMovieDirector").val(movie.director);
+        $.each(movie.writerList, function (index, writer) {
             writers = writers + writer + ", ";
             $('#editWritersModalBody').append("<div><input  id='writer::" + writer +
                     "' type='text' value='" + writer + "' class='writerInput form-control top-buffer'/><a href='#' class='deleteWriterActorLink'>Remove</a></div>");
         });
         writers = writers.replace(/,\s*$/, '') + " ";
-        $('#editDVDWriters').append(writers);
-        $("#editDVDWriters").append("<a href='#editWritersModal' data-toggle='modal' data-target='#editWritersModal'><strong>Edit</strong></a>");
-        $.each(dvd.actorList, function (index, actor) {
+        $('#editMovieWriters').append(writers);
+        $("#editMovieWriters").append("<a href='#editWritersModal' data-toggle='modal' data-target='#editWritersModal'><strong>Edit</strong></a>");
+        $.each(movie.actorList, function (index, actor) {
             actors = actors + actor + ", ";
             $('#editActorsModalBody').append("<div><input type='text' value='" + actor + "' class='actorInput form-control top-buffer'/><a href='#' class='deleteWriterActorLink'>Remove</a></div>");
         });
         actors = actors.replace(/,\s*$/, '') + " ";
-        $('#editDVDActors').append(actors);
-        $("#editDVDActors").append("<a href='#editActorsModal' data-toggle='modal' data-target='#editActorsModal'><strong>Edit</strong></a>");
-        $("#editDVDStudio").val(dvd.studio);
-        $("#editDVDMpaaRating").val(dvd.mpaaRating);
-        userRating = dvd.userRating;
+        $('#editMovieActors').append(actors);
+        $("#editMovieActors").append("<a href='#editActorsModal' data-toggle='modal' data-target='#editActorsModal'><strong>Edit</strong></a>");
+        $("#editMovieStudio").val(movie.studio);
+        $("#editMovieMpaaRating").val(movie.mpaaRating);
+        userRating = movie.userRating;
         for (i = 1; i <= 5; i++) {
             if (i <= userRating) {
-                $("#editDVDUserRating").append("<img id='" + i + "' class='star star-edit' src='" + fullStar + "'alt='Star'>");
+                $("#editMovieUserRating").append("<img id='" + i + "' class='star star-edit' src='" + fullStar + "'alt='Star'>");
             } else {
-                $("#editDVDUserRating").append("<img id='" + i + "' class='star star-edit' src='" + emptyStar + "'alt='Star'>");
+                $("#editMovieUserRating").append("<img id='" + i + "' class='star star-edit' src='" + emptyStar + "'alt='Star'>");
             }
         }
-        $("#editDVDNotes").val(dvd.notes);
+        $("#editMovieNotes").val(movie.notes);
     });
 }
 
-function clearDVDEdits() {
-    $("#editDVDTitle").val("");
-    $("#editDVDCoverURL").val("");
-    $("#editDVDSynopsis").val("");
-    $("#editDVDReleaseDate").val("");
-    $("#editDVDGenres").empty();
-    $("#editDVDDirector").val("");
-    $("#editDVDWriters").empty();
-    $("#editDVDActors").empty();
-    $("#editDVDStudio").val("");
-    $("#editDVDMpaaRating").val("");
-    $("#editDVDUserRating").empty();
-    $("#editDVDNotes").empty();
+function clearMovieEdits() {
+    $("#editMovieTitle").val("");
+    $("#editMovieCoverURL").val("");
+    $("#editMovieSynopsis").val("");
+    $("#editMovieReleaseDate").val("");
+    $("#editMovieGenres").empty();
+    $("#editMovieDirector").val("");
+    $("#editMovieWriters").empty();
+    $("#editMovieActors").empty();
+    $("#editMovieStudio").val("");
+    $("#editMovieMpaaRating").val("");
+    $("#editMovieUserRating").empty();
+    $("#editMovieNotes").empty();
     $("#editWritersModalBody").empty();
     $("#editActorsModalBody").empty();
     $(".genreCheckbox").each(function () {
@@ -271,14 +271,14 @@ function clearDVDEdits() {
 
 function displaySaveCancelButtons() {
     $("#edit-add-delete").empty();
-    $("#edit-add-delete").append($("<a class='btn btn-primary dvdButton' id='saveButton'>Save</a>"));
-    $("#edit-add-delete").append($("<a class='btn btn-primary dvdButton' id='cancelButton'>Cancel</a>"));
+    $("#edit-add-delete").append($("<a class='btn btn-primary movieButton' id='saveButton'>Save</a>"));
+    $("#edit-add-delete").append($("<a class='btn btn-primary movieButton' id='cancelButton'>Cancel</a>"));
 }
 
 function displayEditDeleteButtons() {
     $("#edit-add-delete").empty();
-    $("#edit-add-delete").append($("<a class='btn btn-primary dvdButton' id='editButton'>Edit</a>"));
-    $("#edit-add-delete").append($("<a class='btn btn-primary dvdButton' id='deleteButton'>Delete</a>"));
+    $("#edit-add-delete").append($("<a class='btn btn-primary movieButton' id='editButton'>Edit</a>"));
+    $("#edit-add-delete").append($("<a class='btn btn-primary movieButton' id='deleteButton'>Delete</a>"));
 }
 
 $(document).on("click", "#addButton", function () {
@@ -299,13 +299,13 @@ $(document).on("click", "#cancelButton", function () {
 
 $(document).on("click", "#saveButton", function () {
     if (id === 0) {
-        addDVD();
+        addMovie();
     } else {
-        editDVD();
+        editMovie();
     }
 });
 
-function addDVD() {
+function addMovie() {
     var genres = [];
     var writers = [];
     var actors = [];
@@ -322,21 +322,21 @@ function addDVD() {
     });
     $.ajax({
         type: "POST",
-        url: "dvd",
+        url: "movie",
         data: JSON.stringify({
-            title: $("#editDVDTitle").val(),
-            coverURL: ($("#editDVDCoverURL").empty()) ? $("#editDVDCoverURL").val() : "",
-            trailerURL: ($("#editDVDTrailerURL").empty()) ? $("#editDVDTrailerURL").val() : "",
-            synopsis: ($("#editDVDSynopsis").empty()) ? $("#editDVDSynopsis").val() : "",
-            releaseDate: ($("#editReleaseDate").empty()) ? $("#editDVDReleaseDate").val() : "",
+            title: $("#editMovieTitle").val(),
+            coverURL: ($("#editMovieCoverURL").empty()) ? $("#editMovieCoverURL").val() : "",
+            trailerURL: ($("#editMovieTrailerURL").empty()) ? $("#editMovieTrailerURL").val() : "",
+            synopsis: ($("#editMovieSynopsis").empty()) ? $("#editMovieSynopsis").val() : "",
+            releaseDate: ($("#editReleaseDate").empty()) ? $("#editMovieReleaseDate").val() : "",
             genreList: genres,
-            director: ($("#editDVDDirector").empty()) ? $("#editDVDDirector").val() : "",
+            director: ($("#editMovieDirector").empty()) ? $("#editMovieDirector").val() : "",
             writerList: writers,
             actorList: actors,
-            studio: ($("#editDVDStudio").empty()) ? $("#editDVDStudio").val() : "",
-            mpaaRating: ($("#editDVDMpaaRating").size()) ? $("#editDVDMpaaRating").val() : "",
+            studio: ($("#editMovieStudio").empty()) ? $("#editMovieStudio").val() : "",
+            mpaaRating: ($("#editMovieMpaaRating").size()) ? $("#editMovieMpaaRating").val() : "",
             userRating: userRating,
-            notes: ($("#editDVDNotes").empty()) ? $("#editDVDNotes").val() : ""
+            notes: ($("#editMovieNotes").empty()) ? $("#editMovieNotes").val() : ""
         }),
         contentType: "application/json; charset=utf-8",
         headers: {
@@ -344,15 +344,15 @@ function addDVD() {
             "Content-type": "application/json"
         },
         dataType: "json"
-    }).success(function (dvd, status) {
-        id = dvd.id;
+    }).success(function (movie, status) {
+        id = movie.id;
         showView();
-        loadDVDs();
-    }).error(function (dvd, status) {
+        loadMovies();
+    }).error(function (movie, status) {
         $(".validationErrors").empty();
         $(".validationErrors").show();
         $(".edit").removeClass("has-error");
-        $.each(dvd.responseJSON.fieldErrors, function (index, validationError) {
+        $.each(movie.responseJSON.fieldErrors, function (index, validationError) {
             var errorDiv = validationError.fieldName.replace(/\[(.*?)\]/, "");
             $("#" + errorDiv + "Validation").append(validationError.message);
             $("#" + errorDiv + "Validation").parent().addClass("has-error");
@@ -360,7 +360,7 @@ function addDVD() {
     });
 }
 
-function editDVD() {
+function editMovie() {
     var genres = [];
     var writers = [];
     var actors = [];
@@ -377,21 +377,21 @@ function editDVD() {
     });
     $.ajax({
         type: "PUT",
-        url: "dvd/" + id,
+        url: "movie/" + id,
         data: JSON.stringify({
-            title: $("#editDVDTitle").val(),
-            coverURL: ($("#editDVDCoverURL").empty()) ? $("#editDVDCoverURL").val() : "",
-            trailerURL: ($("#editDVDTrailerURL").empty()) ? $("#editDVDTrailerURL").val() : "",
-            synopsis: ($("#editDVDSynopsis").empty()) ? $("#editDVDSynopsis").val() : "",
-            releaseDate: ($("#editReleaseDate").empty()) ? $("#editDVDReleaseDate").val() : "",
+            title: $("#editMovieTitle").val(),
+            coverURL: ($("#editMovieCoverURL").empty()) ? $("#editMovieCoverURL").val() : "",
+            trailerURL: ($("#editMovieTrailerURL").empty()) ? $("#editMovieTrailerURL").val() : "",
+            synopsis: ($("#editMovieSynopsis").empty()) ? $("#editMovieSynopsis").val() : "",
+            releaseDate: ($("#editReleaseDate").empty()) ? $("#editMovieReleaseDate").val() : "",
             genreList: genres,
-            director: ($("#editDVDDirector").empty()) ? $("#editDVDDirector").val() : "",
+            director: ($("#editMovieDirector").empty()) ? $("#editMovieDirector").val() : "",
             writerList: writers,
             actorList: actors,
-            studio: ($("#editDVDStudio").empty()) ? $("#editDVDStudio").val() : "",
-            mpaaRating: ($("#editDVDMpaaRating").size()) ? $("#editDVDMpaaRating").val() : "",
+            studio: ($("#editMovieStudio").empty()) ? $("#editMovieStudio").val() : "",
+            mpaaRating: ($("#editMovieMpaaRating").size()) ? $("#editMovieMpaaRating").val() : "",
             userRating: userRating,
-            notes: ($("#editDVDNotes").empty()) ? $("#editDVDNotes").val() : ""
+            notes: ($("#editMovieNotes").empty()) ? $("#editMovieNotes").val() : ""
         }),
         contentType: "application/json; charset=utf-8",
         headers: {
@@ -401,12 +401,12 @@ function editDVD() {
         dataType: "json"
     }).success(function (data, status) {
         showView();
-        loadDVDs();
-    }).error(function (dvd, status) {
+        loadMovies();
+    }).error(function (movie, status) {
         $(".validationErrors").empty();
         $(".validationErrors").show();
         $(".edit").removeClass("has-error");
-        $.each(dvd.responseJSON.fieldErrors, function (index, validationError) {
+        $.each(movie.responseJSON.fieldErrors, function (index, validationError) {
             var errorDiv = validationError.fieldName.replace(/\[(.*?)\]/, "");
             $("#" + errorDiv + "Validation").append(validationError.message).append($("<br>"));
             $("#" + errorDiv + "Validation").parent().addClass("has-error");
@@ -415,16 +415,16 @@ function editDVD() {
 }
 
 $(document).on("click", "#deleteButton", function () {
-    var answer = confirm("Are you sure you want to delete this DVD?");
+    var answer = confirm("Are you sure you want to delete this Movie?");
     if (answer) {
         $.ajax({
             type: "DELETE",
-            url: "dvd/" + id
+            url: "movie/" + id
         }).success(function () {
-            loadDVDs();
-            clearDVDInfo();
-            clearDVDEdits();
-            $("#dvdCoverURL").append("<img id='dvdCover' alt='Cover Art' height='300px' width='200px'>");
+            loadMovies();
+            clearMovieInfo();
+            clearMovieEdits();
+            $("#movieCoverURL").append("<img id='movieCover' alt='Cover Art' height='300px' width='200px'>");
         });
     }
 });
@@ -463,14 +463,14 @@ $(document).on("click", ".star-edit", function () {
 
 $(document).on("click", "#genresModalCloseButton", function () {
     var genres = "";
-    $("#editDVDGenres").empty();
+    $("#editMovieGenres").empty();
     $(".genreCheckbox").each(function () {
         if ($(this).is(":checked")) {
             genres = genres + ($(this).attr("value")) + ", ";
         }
     });
     genres = genres.replace(/,\s*$/, '') + " ";
-    $("#editDVDGenres").append(genres + "<a href='#genresModal' data-toggle='modal' data-target='#editGenresModal'><strong>Edit</strong></a>");
+    $("#editMovieGenres").append(genres + "<a href='#genresModal' data-toggle='modal' data-target='#editGenresModal'><strong>Edit</strong></a>");
 });
 
 $(document).on("click", "#writersModalAddButton", function () {
@@ -487,7 +487,7 @@ $(document).on("keypress", ".writerInput", function (e) {
 
 $(document).on("click", "#writersModalCloseButton", function () {
     var writers = "";
-    $("#editDVDWriters").empty();
+    $("#editMovieWriters").empty();
     $(".writerInput").each(function () {
         if ($(this).val().length < 1) {
             $(this).parent().remove();
@@ -496,8 +496,8 @@ $(document).on("click", "#writersModalCloseButton", function () {
         }
     });
     writers = writers.replace(/,\s*$/, '') + " ";
-    $('#editDVDWriters').append(writers);
-    $("#editDVDWriters").append("<a href='#editWritersModal' data-toggle='modal' data-target='#editWritersModal'><strong>Edit</strong></a>");
+    $('#editMovieWriters').append(writers);
+    $("#editMovieWriters").append("<a href='#editWritersModal' data-toggle='modal' data-target='#editWritersModal'><strong>Edit</strong></a>");
 });
 
 $(document).on("focusout", ".actorInput, .writerInput", function () {
@@ -524,7 +524,7 @@ $(document).on("keypress", ".actorInput", function (e) {
 
 $(document).on("click", "#actorsModalCloseButton", function () {
     var actors = "";
-    $("#editDVDActors").empty();
+    $("#editMovieActors").empty();
     $(".actorInput").each(function () {
         if ($(this).val().length < 1) {
             $(this).parent().remove();
@@ -533,6 +533,6 @@ $(document).on("click", "#actorsModalCloseButton", function () {
         }
     });
     actors = actors.replace(/,\s*$/, '') + " ";
-    $('#editDVDActors').append(actors);
-    $("#editDVDActors").append("<a href='#editActorsModal' data-toggle='modal' data-target='#editActorsModal'><strong>Edit</strong></a>");
+    $('#editMovieActors').append(actors);
+    $("#editMovieActors").append("<a href='#editActorsModal' data-toggle='modal' data-target='#editActorsModal'><strong>Edit</strong></a>");
 });

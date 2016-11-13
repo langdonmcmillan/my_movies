@@ -12,7 +12,7 @@
     width: 20px;
 }
 
-.dvdButton {
+.movieButton {
     margin: 0 15px;
     width: 100px;
 }
@@ -64,7 +64,7 @@ html, body {
     height: 100%;
 }
 
-#librarySide, #dvdSide {
+#librarySide, #movieSide {
     height: 100%;
 }
 
@@ -73,16 +73,16 @@ html, body {
     overflow: auto;
 }
 
-#dvdListTable {  
+#movieListTable {  
     max-height: 100%;
 }
 
-#dvdTable {
+#movieTable {
     width: 70%;
     margin: 15px auto;
     max-height: 100%;
 }
 
-#dvdSide {
+#movieSide {
     max-height: 100%;
 }

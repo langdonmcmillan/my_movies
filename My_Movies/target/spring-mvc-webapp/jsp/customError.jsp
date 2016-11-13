@@ -1,5 +1,5 @@
 <%-- 
-    Document   : dvdlibrary
+    Document   : movielibrary
     Created on : Nov 2, 2016, 3:46:18 PM
     Author     : apprentice
 --%>
@@ -13,13 +13,13 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>DVD Library</title>
+        <title>Movie Library</title>
         <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/css/DVDLibraryCSS.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/MovieLibraryCSS.css" rel="stylesheet">
     </head>
     <body>
         <div class='container-fluid'>
-            <h1 class='text-center'>DVD Library</h1>
+            <h1 class='text-center'>Movie Library</h1>
             <div>
                 <h1>An error has occurred...</h1>
                 <h3>${errorMessage}</h3>
@@ -27,6 +27,6 @@
         </div>
         <script src="${pageContext.request.contextPath}/js/jquery-2.2.4.min.js"></script>
         <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-        <script src="js/DVDLibraryJS.js"></script>
+        <script src="js/MovieLibraryJS.js"></script>
     </body>
 </html>

@@ -1,5 +1,5 @@
 <%-- 
-    Document   : dvdlibrary
+    Document   : movielibrary
     Created on : Nov 2, 2016, 3:46:18 PM
     Author     : apprentice
 --%>
@@ -20,86 +20,86 @@
     <body>
         <div class='container-fluid'>
             <h1 class='text-center'>My Movies</h1>
-            <div id="dvdSide" class="col-sm-6 text-center">
-                <div id="dvdTitle" class="view"><h3>Title</h3></div>
-                <div id="editDVDTitleDiv" class="edit">
+            <div id="movieSide" class="col-sm-6 text-center">
+                <div id="movieTitle" class="view"><h3>Title</h3></div>
+                <div id="editMovieTitleDiv" class="edit">
                     <div id="titleValidation" class="validationErrors errorHeaders"></div>
                     <h3>Title</h3>
-                    <input id="editDVDTitle" type="text" class="form-control" placeholder="Title" style="max-width: 300px; margin: 0 auto;"/>
+                    <input id="editMovieTitle" type="text" class="form-control" placeholder="Title" style="max-width: 300px; margin: 0 auto;"/>
                 </div>
-                <div id="dvdCoverURL" class="top-buffer view">
-                    <img id='dvdCover' alt='Cover Art' height='300px' width='200px'>
+                <div id="movieCoverURL" class="top-buffer view">
+                    <img id='movieCover' alt='Cover Art' height='300px' width='200px'>
                 </div>
-                <div id="editDVDCoverURLDiv" class="edit">
+                <div id="editMovieCoverURLDiv" class="edit">
                     <div id="titleValidation" class="validationErrors errorHeaders"></div>
                     <h3>Cover URL</h3>
-                    <input id="editDVDCoverURL" type="url" class="form-control" placeholder="Cover URL" style="max-width: 300px; margin: 0 auto;"/>
+                    <input id="editMovieCoverURL" type="url" class="form-control" placeholder="Cover URL" style="max-width: 300px; margin: 0 auto;"/>
                 </div>
-                <div id="editDVDTrailerURLDiv" class="edit">
+                <div id="editMovieTrailerURLDiv" class="edit">
                     <div id="titleValidation" class="validationErrors errorHeaders"></div>
                     <h3>Trailer URL - Enter Embed Code</h3>
-                    <input id="editDVDTrailerURL" type="url" class="form-control" placeholder="Trailer URL" style="max-width: 300px; margin: 0 auto;"/>
+                    <input id="editMovieTrailerURL" type="url" class="form-control" placeholder="Trailer URL" style="max-width: 300px; margin: 0 auto;"/>
                 </div>
-                <div id="dvdTableDiv">
-                    <table id="dvdTable" class="table table-bordered text-left top-buffer">
-                        <!-- Input by default, hide and make link when dvd loaded -->
+                <div id="movieTableDiv">
+                    <table id="movieTable" class="table table-bordered text-left top-buffer">
+                        <!-- Input by default, hide and make link when movie loaded -->
                         <tr rowspan="2">
                             <th class="col-sm-1">Synopsis:</th>
-                            <td id="dvdSynopsis" class="view"></td>
+                            <td id="movieSynopsis" class="view"></td>
                             <td class="edit">
                                 <div id="synopsisValidation" class="validationErrors"></div>
-                                <input id="editDVDSynopsis" type="text" class="form-control" placeholder="Synopsis"/>
+                                <input id="editMovieSynopsis" type="text" class="form-control" placeholder="Synopsis"/>
                             </td>
                         </tr>
                         <tr>
                             <td>Release:</td>
 
-                            <td id="dvdReleaseDate" class="view"></td>
+                            <td id="movieReleaseDate" class="view"></td>
                             <td class="edit">
                                 <div id="releaseDateValidation" class="validationErrors"></div>
-                                <input id="editDVDReleaseDate" type="number" class="form-control" placeholder="Release Date"/>
+                                <input id="editMovieReleaseDate" type="number" class="form-control" placeholder="Release Date"/>
                             </td>
                         </tr>
                         <tr>
                             <td>Genres:</td>
-                            <td id="dvdGenres" class="view"></td>
-                            <td id="editDVDGenres" class="edit"></td>
+                            <td id="movieGenres" class="view"></td>
+                            <td id="editMovieGenres" class="edit"></td>
                         </tr>
                         <tr>
                             <td>Director:</td>
 
-                            <td id="dvdDirector" class="view"></div></td>
+                            <td id="movieDirector" class="view"></div></td>
                             <td class="edit">
                                 <div id="directorValidation" class="validationErrors"></div>
-                                <input id="editDVDDirector" type="text" class="form-control" placeholder="Director"/>
+                                <input id="editMovieDirector" type="text" class="form-control" placeholder="Director"/>
                             </td>
                         </tr>
                         <tr>
                             <td>Writers:</td>
-                            <td id="dvdWriters" class="view"></td>
+                            <td id="movieWriters" class="view"></td>
                             <td class="edit">
                                 <div id="writerListValidation" class="validationErrors"></div>
-                                <div id="editDVDWriters"></div>
+                                <div id="editMovieWriters"></div>
                             </td>
                         </tr>
                         <tr>
                             <td>Actors:</td>
-                            <td id="dvdActors" class="view"></td>
-                            <td id="editDVDActors" class="edit"></td>
+                            <td id="movieActors" class="view"></td>
+                            <td id="editMovieActors" class="edit"></td>
                         </tr>
                         <tr>
                             <td>Studio:</td>
-                            <td id="dvdStudio" class="view"></td>
+                            <td id="movieStudio" class="view"></td>
                             <td class="edit">
                                 <div id="studioValidation" class="validationErrors"></div>
-                                <input id="editDVDStudio" type="text" class="form-control" placeholder="Studio"/>
+                                <input id="editMovieStudio" type="text" class="form-control" placeholder="Studio"/>
                             </td>
                         </tr>
                         <tr>
                             <td>MPAA:</td>
-                            <td id="dvdMpaaRating" class="view"></td>
+                            <td id="movieMpaaRating" class="view"></td>
                             <td class="edit">
-                                <select id="editDVDMpaaRating" type="text" class="form-control">
+                                <select id="editMovieMpaaRating" type="text" class="form-control">
                                     <option id="na" value="" selected>Select a Rating</option>
                                     <option id="g" value="G">G</option>
                                     <option id="pg" value="PG">PG</option>
@@ -111,9 +111,9 @@
                         </tr>
                         <tr>
                             <td>User Rating:</td>
-                            <td id="dvdUserRating" class="view">
+                            <td id="movieUserRating" class="view">
                             </td>
-                            <td id="editDVDUserRating" class="edit">
+                            <td id="editMovieUserRating" class="edit">
                             </td>
                         <input class="hidden form-control" type="number" id="userRatingNumber" value="0" readOnly/>
                         <img id="fullStar" class="star hidden" src="${pageContext.request.contextPath}/img/fullStar.png"/>
@@ -121,24 +121,24 @@
                         </tr>
                         <tr>
                             <td>Notes:</td>
-                            <td id="dvdNotes" class="view"></td>
+                            <td id="movieNotes" class="view"></td>
                             <td class="edit">
                                 <div id="notesValidation" class="validationErrors"></div>
-                                <input id="editDVDNotes" type="text" class="form-control" placeholder="Notes"/>
+                                <input id="editMovieNotes" type="text" class="form-control" placeholder="Notes"/>
                             </td>
                         </tr>
                     </table>
                     <div id="edit-add-delete" class="text-center">
                     </div>
                 </div>
-                <div id="viewDVDButtons" class="text-center form-group">
+                <div id="viewMovieButtons" class="text-center form-group">
                 </div>
             </div>
             <div id="librarySide" class="col-sm-6 side">
                 <div>
                     <form class="form-inline" role="form">
-                        <a id="addButton" class='btn btn-primary top-buffer'>+ Add DVD</a>
-                        <button id="listAllButton" class='btn btn-primary top-buffer'>List All DVDs</button>
+                        <a id="addButton" class='btn btn-primary top-buffer'>+ Add Movie</a>
+                        <button id="listAllButton" class='btn btn-primary top-buffer'>List All Movies</button>
                         <select id='searchType' class='form-control top-buffer'>
                             <option value="Keyword" selected>Keyword Search</option>
                             <option value="Title">Title</option>
@@ -152,7 +152,7 @@
                     </form>
                 </div>
                 <div id="libraryTableDiv" class="top-buffer">
-                    <table id="dvdListTable" class="table table-bordered table-striped">
+                    <table id="movieListTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th class="col-sm-1"><button style="visibility: hidden" class="btn btn-primary">Submit</button></th>
@@ -162,7 +162,7 @@
                                 <th class="col-sm-3"><a href="#" id="userRatingSortLink" class="sortLink">User Rating</a></th>
                             </tr>
                         </thead>
-                        <tbody id="dvdListContent">
+                        <tbody id="movieListContent">
                         </tbody>
                     </table>
                 </div>

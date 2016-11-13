@@ -17,7 +17,7 @@
     <!-- Bean definitions go here -->
     <tx:annotation-driven/>
 
-    <context:component-scan base-package="com.sg.dvdlibrary.dao" />
+    <context:component-scan base-package="com.sg.mymovies.dao" />
     
     <bean id="dataSource"
           class="org.apache.commons.dbcp2.BasicDataSource">
@@ -43,9 +43,9 @@
         <constructor-arg ref="jdbcTemplate"/>
     </bean> 
     
-    <bean id="dvdMyMovieDb" class="com.sg.dvdlibrary.dao.DVDDbImpl">
+    <bean id="myMoviesDb" class="com.sg.mymovies.dao.MyMoviesDbImpl">
         <property name="jdbcTemplate" ref="jdbcTemplate"/>
     </bean> 
     
-    <!-- <bean id="dvdFileImpl" class="com.sg.dvdlibrary.dao.DVDFileIOImpl"></bean> -->
+    <!-- <bean id="MyMoviesFileImpl" class="com.sg.mymovies.dao.MyMoviesFileIOImpl"></bean> -->
 </beans>
