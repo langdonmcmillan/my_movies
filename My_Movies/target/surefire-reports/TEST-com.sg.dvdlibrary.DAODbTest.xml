@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="6" failures="0" name="com.sg.dvdlibrary.DAODbTest" time="6.208" errors="0" skipped="0">
+<testsuite tests="15" failures="0" name="com.sg.dvdlibrary.DAODbTest" time="10.469" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64"/>
@@ -13,6 +13,7 @@
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="unknown"/>
+    <property name="test" value="com.sg.dvdlibrary.DAODbTest"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="user.dir" value="/home/apprentice/Documents/_repos/My_Movies/My_Movies"/>
     <property name="java.runtime.version" value="1.8.0_111-b14"/>
@@ -35,14 +36,14 @@
     <property name="user.home" value="/home/apprentice"/>
     <property name="user.timezone" value="America/New_York"/>
     <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
-    <property name="file.encoding" value="UTF-8"/>
     <property name="java.specification.version" value="1.8"/>
+    <property name="file.encoding" value="UTF-8"/>
     <property name="user.name" value="apprentice"/>
     <property name="java.class.path" value="/home/apprentice/netbeans-8.1/java/maven/boot/plexus-classworlds-2.4.jar"/>
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/usr/lib/jvm/java-8-oracle/jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dmaven.ext.class.path=/home/apprentice/netbeans-8.1/java/maven-nblib/netbeans-eventspy.jar clean install"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dtest=com.sg.dvdlibrary.DAODbTest -Dmaven.ext.class.path=/home/apprentice/netbeans-8.1/java/maven-nblib/netbeans-eventspy.jar surefire:test"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
@@ -60,10 +61,19 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testTitleSort" time="1.761"/>
-  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testUpdateDVD" time="0.785"/>
-  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testYearSort" time="1.599"/>
-  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testUserRatingSort" time="0.65"/>
-  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testMPAASort" time="0.619"/>
-  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testRemoveDVD" time="0.718"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testGenreSearch" time="1.497"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testMPAASearch" time="0.682"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testWriterSearch" time="0.667"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testTitleSort" time="0.689"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testUpdateDVD" time="0.681"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testDirectorSearch" time="0.672"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testYearSort" time="0.596"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testStudioSearch" time="0.614"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testKeywordSearch" time="0.602"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testTitleSearch" time="0.619"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testActorSearch" time="0.573"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testYearSearch" time="0.584"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testUserRatingSort" time="0.582"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testMPAASort" time="0.615"/>
+  <testcase classname="com.sg.dvdlibrary.DAODbTest" name="testRemoveDVD" time="0.689"/>
 </testsuite>

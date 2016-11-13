@@ -21,7 +21,7 @@
           class="org.apache.commons.dbcp2.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url"
-                  value="jdbc:mysql://localhost:3306/myMovies"/>
+                  value="jdbc:mysql://localhost:3306/myMoviesTest"/>
         <property name="username" value="root"/>
         <property name="password" value="rivers"/>
         <property name="initialSize" value="4"/>

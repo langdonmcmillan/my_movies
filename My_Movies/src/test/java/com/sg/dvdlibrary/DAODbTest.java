@@ -186,13 +186,13 @@ public class DAODbTest {
         
         assertEquals(10, dao.getAllDVDs().size());
         
-        ArrayList<DVD> sorted = dao.sortByTitle(false);
+        ArrayList<DVD> sorted = dao.sortByTitle(true);
         assertEquals("Title9", sorted.get(0).getTitle());
         assertEquals("Title5", sorted.get(4).getTitle());
         assertEquals("Serious Movie", sorted.get(9).getTitle()); 
         
         sorted = new ArrayList<>();
-        sorted = dao.sortByTitle(true);
+        sorted = dao.sortByTitle(!true);
         assertEquals("Title9", sorted.get(9).getTitle());
         assertEquals("Title5", sorted.get(5).getTitle());
         assertEquals("Serious Movie", sorted.get(0).getTitle()); 
@@ -202,13 +202,13 @@ public class DAODbTest {
     public void testYearSort() {
         assertEquals(10, dao.getAllDVDs().size());
         
-        ArrayList<DVD> sorted = dao.sortByYear(false);
+        ArrayList<DVD> sorted = dao.sortByYear(true);
         assertEquals("Title9", sorted.get(9).getTitle());
         assertEquals("Title5", sorted.get(5).getTitle());
         assertEquals("Serious Movie", sorted.get(0).getTitle());
         
         sorted = new ArrayList<>();
-        sorted = dao.sortByYear(true);
+        sorted = dao.sortByYear(!true);
         assertEquals("Title9", sorted.get(0).getTitle());
         assertEquals("Title5", sorted.get(4).getTitle());
         assertEquals("Serious Movie", sorted.get(9).getTitle());
@@ -218,10 +218,10 @@ public class DAODbTest {
     public void testMPAASort() {
         assertEquals(10, dao.getAllDVDs().size());
         
-        ArrayList<DVD> sorted = dao.sortByMPAARating(true);
+        ArrayList<DVD> sorted = dao.sortByMPAARating(!true);
         assertEquals("Serious Movie", sorted.get(9).getTitle());
         
-        sorted = dao.sortByMPAARating(false);
+        sorted = dao.sortByMPAARating(true);
         assertEquals("Serious Movie", sorted.get(0).getTitle());
     }
     
@@ -229,14 +229,89 @@ public class DAODbTest {
     public void testUserRatingSort() {
         assertEquals(10, dao.getAllDVDs().size());
         
-        ArrayList<DVD> sorted = dao.sortByUserRating(true);
+        ArrayList<DVD> sorted = dao.sortByUserRating(!true);
         assertEquals("Title9", sorted.get(9).getTitle());
         assertEquals("Title5", sorted.get(5).getTitle());
         assertEquals("Serious Movie", sorted.get(0).getTitle());
         
-        sorted = dao.sortByUserRating(false);
+        sorted = dao.sortByUserRating(true);
         assertEquals("Title9", sorted.get(0).getTitle());
         assertEquals("Title5", sorted.get(4).getTitle());
         assertEquals("Serious Movie", sorted.get(9).getTitle());
+    }
+    
+    @Test
+    public void testTitleSearch() {
+        assertEquals(9, dao.getDVDsWithTitle("Title").size());
+        assertEquals(1, dao.getDVDsWithTitle("Title1").size());
+        assertEquals(0, dao.getDVDsWithTitle("Title11").size());
+        assertEquals(1, dao.getDVDsWithTitle("Serious Movie").size());
+        assertEquals(10, dao.getDVDsWithTitle("E").size());
+    }
+    
+    @Test
+    public void testYearSearch() {
+        assertEquals(1, dao.getDVDsWithReleaseDate(2005).size());
+    }
+    
+    @Test
+    public void testGenreSearch() {
+        assertEquals(9, dao.getDVDsWithGenre("Action").size());
+        assertEquals(10, dao.getDVDsWithGenre("Comedy").size());
+        assertEquals(1, dao.getDVDsWithGenre("Drama").size());
+        assertEquals(0, dao.getDVDsWithGenre("D").size());
+    }
+
+    @Test
+    public void testDirectorSearch() {
+        assertEquals(9, dao.getDVDsWithDirector("Director").size());
+        assertEquals(1, dao.getDVDsWithDirector("Director1").size());
+        assertEquals(0, dao.getDVDsWithDirector("Director55").size());
+        assertEquals(1, dao.getDVDsWithDirector("Charlie").size());
+        assertEquals(10, dao.getDVDsWithDirector("D").size());
+    }
+
+    @Test
+    public void testActorSearch() {
+        assertEquals(9, dao.getDVDsWithActor("Bovine J").size());
+        assertEquals(1, dao.getDVDsWithActor("Ryan J").size());
+        assertEquals(9, dao.getDVDsWithActor("McPoyle").size());
+        assertEquals(1, dao.getDVDsWithActor("Actor").size());
+        assertEquals(10, dao.getDVDsWithActor("Ryan").size());
+    }
+    
+    @Test
+    public void testWriterSearch() {
+        assertEquals(9, dao.getDVDsWithWriter("Writer").size());
+        assertEquals(1, dao.getDVDsWithWriter("Writer 11").size());
+        assertEquals(1, dao.getDVDsWithWriter("Oscar").size());
+        assertEquals(10, dao.getDVDsWithWriter("W").size());
+    }
+    
+    @Test
+    public void testStudioSearch() {
+        assertEquals(10, dao.getDVDsFromStudio("Studio").size());
+        assertEquals(1, dao.getDVDsFromStudio("Studio1").size());
+        assertEquals(10, dao.getDVDsFromStudio("D").size());
+        assertEquals(1, dao.getDVDsFromStudio("D Studio").size());
+    }
+    
+    @Test
+    public void testMPAASearch() {
+        assertEquals(9, dao.getDVDsWithMPAARating("PG").size());
+        assertEquals(0, dao.getDVDsWithMPAARating("G").size());
+        assertEquals(0, dao.getDVDsWithMPAARating("PG-13").size());
+        assertEquals(1, dao.getDVDsWithMPAARating("R").size());
+    }
+    @Test
+    public void testKeywordSearch() {
+        assertEquals(10, dao.getDVDsByKeyword("Ryan").size());
+        assertEquals(1, dao.getDVDsByKeyword("seriou").size());
+        assertEquals(9, dao.getDVDsByKeyword("titl").size());
+        assertEquals(0, dao.getDVDsByKeyword("studio").size());
+        assertEquals(1, dao.getDVDsByKeyword("Oscar").size());
+        assertEquals(10, dao.getDVDsByKeyword("D").size());
+        assertEquals(1, dao.getDVDsByKeyword("Charlie").size());
+        assertEquals(9, dao.getDVDsByKeyword("direct").size());
     }
 }

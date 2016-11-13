@@ -1,4 +1,4 @@
-use myMovies;
+use myMoviesTest;
 
 select * from Movies;
 select * from Genres;
@@ -10,3 +10,4 @@ select * from MpaaRatings;
 select * from MoviesxGenres;
 select * from MoviesxWriters;
 select * from MoviesxActors;
+

@@ -1,0 +1,12 @@
+use myMoviesTest;
+
+select * from Movies;
+select * from Genres;
+select * from Directors;
+select * from Actors;
+select * from Writers;
+select * from Studios;
+select * from MpaaRatings;
+select * from MoviesxGenres;
+select * from MoviesxWriters;
+select * from MoviesxActors;

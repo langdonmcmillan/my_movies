@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `Movies` (
  `trailerURL` varchar(500),
  `coverURL` varchar(500),
  `synopsis` varchar(500),
+ `notes` varchar(500),
  PRIMARY KEY (`movieID`)
 );
 

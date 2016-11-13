@@ -33,31 +33,29 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class DVDDbImpl implements DVDLibraryDAO {
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
     private ArrayList<DVD> currentDVDList;
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Inject
     public DVDDbImpl() {
         this.currentDVDList = new ArrayList<>();
     }
 
-    @Autowired
+    
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(this.jdbcTemplate);
     }
 
     private static final String ADD_MOVIE = "insert into Movies (title, releaseDate, mpaaRatingsID, "
-            + "directorID, studioID, userRating, trailerURL, coverURL, synopsis) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + "directorID, studioID, userRating, trailerURL, coverURL, synopsis, notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String ADD_DIRECTOR = "insert ignore into Directors (directorName) values (?)";
     private static final String ADD_STUDIO = "insert ignore into Studios (studioName) values (?)";
     private static final String ADD_WRITER = "insert ignore into Writers (writerName) values (?)";
     private static final String ADD_ACTOR = "insert ignore into Actors (actorName) values (?)";
 
     private static final String UPDATE_MOVIE = "update Movies set title = ?, releaseDate = ?, mpaaRatingsID = ?, "
-            + "directorID = ?, studioID = ?, userRating = ?, trailerURL = ?, coverURL = ?, synopsis = ? where movieID = ?";
+            + "directorID = ?, studioID = ?, userRating = ?, trailerURL = ?, coverURL = ?, synopsis = ?, notes = ? where movieID = ?";
 
     private static final String INSERT_MOVIE_GENRES = "insert into MoviesxGenres (movieID, genreID) values (?, ?)";
     private static final String INSERT_MOVIE_WRITERS = "insert into MoviesxWriters (movieID, writerID) values (?, ?)";
@@ -75,15 +73,15 @@ public class DVDDbImpl implements DVDLibraryDAO {
     private static final String GET_GENRE_ID = "select genreID from Genres where genreName = ?";
     private static final String GET_WRITER_ID = "select writerID from Writers where writerName = ?";
 
-    private static final String GET_MOVIE = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String GET_MOVIE = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m\n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID\n"
             + "where m.movieID = ?";
-    private static final String GET_ALL_MOVIES = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String GET_ALL_MOVIES = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m\n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
-            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID";
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID order by title asc";
     private static final String GET_MPAA_RATING = "select mpaaRatingsName from MpaaRatings mpaa join Movies m on m.mpaaRatingsID = mpaa.mpaaRatingsID where movieID = ?";
     private static final String GET_DIRECTOR = "select directorName from Directors d join Movies m on m.directorID = d.directorID where movieID = ?";
     private static final String GET_STUDIO = "select studioName from Studios s join Movies m on m.studioID = s.studioID where movieID = ?";
@@ -91,39 +89,90 @@ public class DVDDbImpl implements DVDLibraryDAO {
     private static final String GET_WRITERS = "select writerName from Writers w join MoviesxWriters mw on w.writerID = mw.writerID where mw.movieID = ?";
     private static final String GET_ACTORS = "select actorName from Actors g join MoviesxActors ma on g.actorID = ma.actorID where ma.movieID = ?";
 
-    private static final String SORT_BY_TITLE_ASC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String SORT_BY_TITLE_ASC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.movieID in (:ids) order by m.title asc";
-    private static final String SORT_BY_TITLE_DESC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String SORT_BY_TITLE_DESC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.movieID in (:ids) order by m.title desc";
-    private static final String SORT_BY_YEAR_ASC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String SORT_BY_YEAR_ASC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.movieID in (:ids) order by m.releaseDate asc";
-    private static final String SORT_BY_YEAR_DESC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String SORT_BY_YEAR_DESC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.movieID in (:ids) order by m.releaseDate desc";
-    private static final String SORT_BY_MPAA_ASC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String SORT_BY_MPAA_ASC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.movieID in (:ids) order by mpaa.mpaaRatingsID asc";
-    private static final String SORT_BY_MPAA_DESC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String SORT_BY_MPAA_DESC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.movieID in (:ids) order by mpaa.mpaaRatingsID desc";
-    private static final String SORT_BY_USER_ASC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String SORT_BY_USER_ASC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.movieID in (:ids) order by m.userRating asc";
-    private static final String SORT_BY_USER_DESC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis from Movies m\n"
+    private static final String SORT_BY_USER_DESC = "select m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
             + "join Directors d on d.directorID = m.directorID\n"
             + "join Studios s on s.studioID = m.studioID\n"
             + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.movieID in (:ids) order by m.userRating desc";
 
+    private static final String SEARCH_BY_TITLE = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID\n"
+            + "join Studios s on s.studioID = m.studioID\n"
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.title like ? order by title asc";
+    private static final String SEARCH_BY_YEAR = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID\n"
+            + "join Studios s on s.studioID = m.studioID\n"
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID where m.releaseDate = ? order by title asc";
+    private static final String SEARCH_BY_DIRECTOR = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID "
+            + "join Studios s on s.studioID = m.studioID "
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID "
+            + "where d.directorName like ? order by title asc";
+    private static final String SEARCH_BY_STUDIO = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID "
+            + "join Studios s on s.studioID = m.studioID "
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID "
+            + "where s.studioName like ? order by title asc";
+    private static final String SEARCH_BY_MPAA = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID \n"
+            + "join Studios s on s.studioID = m.studioID \n"
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID "
+            + "where mpaa.mpaaRatingsName = ? order by title asc";
+    private static final String SEARCH_BY_GENRE = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID \n"
+            + "join Studios s on s.studioID = m.studioID \n"
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID "
+            + "join MoviesxGenres mg on mg.movieID = m.movieID "
+            + "join Genres g on mg.genreID = g.genreID where g.genreName = ? order by title asc";
+    private static final String SEARCH_BY_WRITER = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID \n"
+            + "join Studios s on s.studioID = m.studioID \n"
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID "
+            + "join MoviesxWriters mw on mw.movieID = m.movieID "
+            + "join Writers w on mw.writerID = w.writerID where w.writerName like ? order by title asc";
+    private static final String SEARCH_BY_ACTOR = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID\n"
+            + "join Studios s on s.studioID = m.studioID\n"
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID "
+            + "join MoviesxActors mg on mg.movieID = m.movieID "
+            + "join Actors g on mg.actorID = g.actorID where g.actorName like ? order by title asc";
+    private static final String SEARCH_BY_KEYWORD = "select distinct m.movieID, m.title, m.releaseDate, mpaa.mpaaRatingsName, d.directorName, s.studioName, m.userRating, m.trailerURL, m.coverURL, m.synopsis, m.notes from Movies m \n"
+            + "join Directors d on d.directorID = m.directorID\n"
+            + "join Studios s on s.studioID = m.studioID\n"
+            + "join MpaaRatings mpaa on mpaa.mpaaRatingsID = m.mpaaRatingsID "
+            + "join MoviesxWriters mw on mw.movieID = m.movieID "
+            + "join MoviesxActors ma on ma.movieID = m.movieID "
+            + "join Writers w on mw.writerID = w.writerID "
+            + "join Actors a on ma.actorID = a.actorID "
+            + "where m.title like ? or d.directorName like ? or w.writerName like ? or a.actorName like ? "
+            + "order by title asc";
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public DVD addDVD(DVD dvd) {
@@ -136,7 +185,8 @@ public class DVDDbImpl implements DVDLibraryDAO {
                 dvd.getUserRating(),
                 dvd.getTrailerURL(),
                 dvd.getCoverURL(),
-                dvd.getSynopsis());
+                dvd.getSynopsis(),
+                dvd.getNotes());
         dvd.setId(jdbcTemplate.queryForObject("select LAST_INSERT_ID()", Integer.class));
         addWriters(dvd);
         addActors(dvd);
@@ -179,6 +229,7 @@ public class DVDDbImpl implements DVDLibraryDAO {
                 dvd.getTrailerURL(),
                 dvd.getCoverURL(),
                 dvd.getSynopsis(),
+                dvd.getNotes(),
                 dvd.getId());
         addWriters(dvd);
         addActors(dvd);
@@ -209,7 +260,7 @@ public class DVDDbImpl implements DVDLibraryDAO {
 
     @Override
     public ArrayList<DVD> sortByTitle(boolean defaultSort) {
-        String sortDirection = (defaultSort) ? SORT_BY_TITLE_ASC : SORT_BY_TITLE_DESC;
+        String sortDirection = (defaultSort) ? SORT_BY_TITLE_DESC : SORT_BY_TITLE_ASC;
         List<Integer> currentDVDIDs = currentDVDList.stream().map(DVD::getId).collect(Collectors.toList());
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ids", currentDVDIDs);
@@ -231,7 +282,7 @@ public class DVDDbImpl implements DVDLibraryDAO {
 
     @Override
     public ArrayList<DVD> sortByYear(boolean defaultSort) {
-        String sortDirection = (defaultSort) ? SORT_BY_YEAR_DESC : SORT_BY_YEAR_ASC;
+        String sortDirection = (defaultSort) ? SORT_BY_YEAR_ASC : SORT_BY_YEAR_DESC;
         List<Integer> currentDVDIDs = currentDVDList.stream().map(DVD::getId).collect(Collectors.toList());
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ids", currentDVDIDs);
@@ -252,7 +303,7 @@ public class DVDDbImpl implements DVDLibraryDAO {
 
     @Override
     public ArrayList<DVD> sortByMPAARating(boolean defaultSort) {
-        String sortDirection = (defaultSort) ? SORT_BY_MPAA_ASC : SORT_BY_MPAA_DESC;
+        String sortDirection = (defaultSort) ? SORT_BY_MPAA_DESC : SORT_BY_MPAA_ASC;
         List<Integer> currentDVDIDs = currentDVDList.stream().map(DVD::getId).collect(Collectors.toList());
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ids", currentDVDIDs);
@@ -273,7 +324,7 @@ public class DVDDbImpl implements DVDLibraryDAO {
 
     @Override
     public ArrayList<DVD> sortByUserRating(boolean defaultSort) {
-        String sortDirection = (!defaultSort) ? SORT_BY_USER_ASC : SORT_BY_USER_DESC;
+        String sortDirection = (!defaultSort) ? SORT_BY_USER_DESC : SORT_BY_USER_ASC;
         List<Integer> currentDVDIDs = currentDVDList.stream().map(DVD::getId).collect(Collectors.toList());
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ids", currentDVDIDs);
@@ -293,48 +344,162 @@ public class DVDDbImpl implements DVDLibraryDAO {
     }
 
     @Override
-    public ArrayList<DVD> getDVDsWithTitle(String title) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<DVD> getDVDsWithTitle(String searchTerm) {
+        String title = "%" + searchTerm + "%";
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_TITLE, new MovieMapper(), title);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
     public ArrayList<DVD> getDVDsWithReleaseDate(int releaseDate) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_YEAR, new MovieMapper(), releaseDate);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
     public ArrayList<DVD> getDVDsWithGenre(String genre) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_GENRE, new MovieMapper(), genre);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
-    public ArrayList<DVD> getDVDsWithDirector(String director) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<DVD> getDVDsWithDirector(String searchTerm) {
+        String director = "%" + searchTerm + "%";
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_DIRECTOR, new MovieMapper(), director);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
-    public ArrayList<DVD> getDVDsWithWriter(String writer) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<DVD> getDVDsWithWriter(String searchTerm) {
+        String writer = "%" + searchTerm + "%";
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_WRITER, new MovieMapper(), writer);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
-    public ArrayList<DVD> getDVDsWithActor(String actor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<DVD> getDVDsWithActor(String searchTerm) {
+        String actor = "%" + searchTerm + "%";
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_ACTOR, new MovieMapper(), actor);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
-    public ArrayList<DVD> getDVDsFromStudio(String studio) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<DVD> getDVDsFromStudio(String searchTerm) {
+        String studio = "%" + searchTerm + "%";
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_STUDIO, new MovieMapper(), studio);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
     public ArrayList<DVD> getDVDsWithMPAARating(String rating) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_MPAA, new MovieMapper(), rating);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
     public ArrayList<DVD> getDVDsByKeyword(String searchTerm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String search = "%" + searchTerm + "%";
+        currentDVDList.clear();
+        try {
+            List<DVD> allDVDs = jdbcTemplate.query(SEARCH_BY_KEYWORD, new MovieMapper(), search, search, search, search);
+            for (DVD dvd : allDVDs) {
+                dvd.setGenreList((ArrayList<String>) jdbcTemplate.queryForList(GET_GENRES, new Integer[]{dvd.getId()}, String.class));
+                dvd.setWriterList((ArrayList<String>) jdbcTemplate.queryForList(GET_WRITERS, new Integer[]{dvd.getId()}, String.class));
+                dvd.setActorList((ArrayList<String>) jdbcTemplate.queryForList(GET_ACTORS, new Integer[]{dvd.getId()}, String.class));
+                currentDVDList.add(dvd);
+            }
+            return currentDVDList;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     private void addActors(DVD dvd) {
@@ -452,7 +617,7 @@ public class DVDDbImpl implements DVDLibraryDAO {
         List<Integer> genreIDs = new ArrayList<>();
         for (String genre : genreList) {
             try {
-                genreIDs.add(jdbcTemplate.queryForObject(GET_GENRE_ID, new Object[]{genre}, Integer.class));
+                genreIDs.add(jdbcTemplate.queryForObject(GET_GENRE_ID, Integer.class, genre));
             } catch (EmptyResultDataAccessException ex) {
             }
         }
@@ -466,7 +631,7 @@ public class DVDDbImpl implements DVDLibraryDAO {
         List<Integer> writerIDs = new ArrayList<>();
         for (String writerName : writerList) {
             try {
-                writerIDs.add(jdbcTemplate.queryForObject(GET_WRITER_ID, new Object[]{writerName}, Integer.class));
+                writerIDs.add(jdbcTemplate.queryForObject(GET_WRITER_ID, Integer.class, writerName));
             } catch (EmptyResultDataAccessException ex) {
                 jdbcTemplate.update(ADD_WRITER, writerName);
                 writerIDs.add(jdbcTemplate.queryForObject("select LAST_INSERT_ID()", Integer.class));
@@ -482,23 +647,13 @@ public class DVDDbImpl implements DVDLibraryDAO {
         List<Integer> actorIDs = new ArrayList<>();
         for (String actorName : actorList) {
             try {
-                actorIDs.add(jdbcTemplate.queryForObject(GET_ACTOR_ID, new Object[]{actorName}, Integer.class));
+                actorIDs.add(jdbcTemplate.queryForObject(GET_ACTOR_ID, Integer.class, actorName));
             } catch (EmptyResultDataAccessException ex) {
                 jdbcTemplate.update(ADD_ACTOR, actorName);
                 actorIDs.add(jdbcTemplate.queryForObject("select LAST_INSERT_ID()", Integer.class));
             }
         }
         return actorIDs;
-    }
-
-    private static final class GenreMapper implements RowMapper<Integer> {
-
-        @Override
-        public Integer mapRow(ResultSet rs, int i) throws SQLException {
-            Integer genreID;
-            genreID = (rs.getInt("genreID"));
-            return genreID;
-        }
     }
 
     private static final class MovieMapper implements RowMapper<DVD> {
@@ -516,6 +671,7 @@ public class DVDDbImpl implements DVDLibraryDAO {
             dvd.setMpaaRating(rs.getString("mpaaRatingsName"));
             dvd.setDirector(rs.getString("directorName"));
             dvd.setStudio(rs.getString("studioName"));
+            dvd.setNotes(rs.getString("notes"));
             return dvd;
         }
     }

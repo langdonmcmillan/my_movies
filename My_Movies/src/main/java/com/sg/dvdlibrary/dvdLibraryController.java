@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class dvdLibraryController {
 
     private DVDLibraryDAO dao;
-
+    
+    @Autowired
     @Inject
     public dvdLibraryController(DVDLibraryDAO dao) {
         this.dao = dao;
@@ -56,7 +58,7 @@ public class dvdLibraryController {
         dao.updateDVD(dvd);
     }
 
-    @RequestMapping(value = "/dvd/0", method = RequestMethod.POST)
+    @RequestMapping(value = "/dvd", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public DVD addDVD(@Valid @RequestBody DVD dvd) {
